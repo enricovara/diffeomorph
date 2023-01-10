@@ -12,26 +12,27 @@ function diffeomorphic()
 
 %Rhodri Cusack and Bobby Stojanoski July 2013
 %===========================================================================
+rng(3);
 
 maxdistortion=160; % changes max amount of distortion
 nsteps=40; % number of steps
 imsz= 1000; % size of output images (bigger or equal to 2 x input image)
 
-picpath='directory with images'
-outpicpath='output directory'
+picpath='/Users/evaran/Documents/PZ/02_AV_face/0_dataset/12/ddddddddd';
+outpicpath='/Users/evaran/Documents/PZ/02_AV_face/0_dataset/12/nnnnnnnnn';
 %create output directory
 if ~exist(outpicpath, 'dir')
     mkdir(outpicpath);
 end
 
-imgtype='jpg'; %file type
+imgtype='png'; %file type
 fns=dir(fullfile(picpath,sprintf('*.%s',imgtype)));
 figure(10);
 
-[YI XI]=meshgrid(1:imsz,1:imsz);
+[YI, XI]=meshgrid(1:imsz,1:imsz);
 
 if (~exist('Xn','var'))
-end;
+end
 
 
 phaseoffset=floor(rand(1)*40);
@@ -62,9 +63,9 @@ for i=1:length(fns) %This is the number of objects in the directory
     end;
     Im((x1+1):(x1+Psz(1)),(y1+1):(y1+Psz(2)),:)=P;
     
-    [cxA cyA]=getdiffeo(imsz,maxdistortion,nsteps);
-    [cxB cyB]=getdiffeo(imsz,maxdistortion,nsteps);
-    [cxF cyF]=getdiffeo(imsz,maxdistortion,nsteps);
+    [cxA, cyA]=getdiffeo(imsz,maxdistortion,nsteps);
+    [cxB, cyB]=getdiffeo(imsz,maxdistortion,nsteps);
+    [cxF, cyF]=getdiffeo(imsz,maxdistortion,nsteps);
     
     interpIm=Im;
     figure(11);
@@ -108,8 +109,8 @@ for i=1:length(fns) %This is the number of objects in the directory
                 axes('position',[centrex-w/2 centrey-w/2 w w]);
                 imagesc(interpIm(:,:,1:3));
                 axis off
-            end;
-            [pth randfn] = fileparts(tempname);
+            end
+            [pth, randfn] = fileparts(tempname);
             randstr = randfn(27:end);
             imwrite(uint8(interpIm),fullfile(outpicpath,sprintf('Im_%02d_%02d.%s',i,ind,imgtype)),imgtype);
             randfn = sprintf('W_%02d_%02d_%s.%s',i,ind,randstr,imgtype); %This is the recoded name of the file
@@ -120,16 +121,16 @@ for i=1:length(fns) %This is the number of objects in the directory
             origfn{i} = fns(i).name;
             save filename_mapping.mat filenames origfn
             ind=ind+indstep;
-        end;
-    end;
+        end
+    end
 end
 end
 
 
-function [XIn YIn]=getdiffeo(imsz,maxdistortion,nsteps)
+function [XIn, YIn]=getdiffeo(imsz,maxdistortion,nsteps)
 ncomp=6;
 
-[YI XI]=meshgrid(1:imsz,1:imsz);
+[YI, XI]=meshgrid(1:imsz,1:imsz);
 
 % make diffeomorphic warp field by adding random DCTs
 ph=rand(ncomp,ncomp,4)*2*pi;
@@ -140,8 +141,8 @@ for xc=1:ncomp
     for yc=1:ncomp
         Xn=Xn+a(xc,yc)*cos(xc*XI/imsz*2*pi+ph(xc,yc,1))*cos(yc*YI/imsz*2*pi+ph(xc,yc,2));
         Yn=Yn+a(xc,yc)*cos(xc*XI/imsz*2*pi+ph(xc,yc,3))*cos(yc*YI/imsz*2*pi+ph(xc,yc,4));
-    end;
-end;
+    end
+end
 % Normalise to RMS of warps in each direction
 Xn=Xn/sqrt(mean(Xn(:).*Xn(:)));
 Yn=Yn/sqrt(mean(Yn(:).*Yn(:)));

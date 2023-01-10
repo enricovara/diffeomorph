@@ -13,24 +13,23 @@ function diffeomorphic_movie()
 %       Thanks to Megan K Finnegan (Illinois) for highlighting this issue.
 %===========================================================================
 
-cd 'G:\Dropbox\MovieWarpingScript\'
+rng(3);
 
-maxdistortion=60; % changes max amount of distortion
+maxdistortion=10; % changes max amount of distortion
 nsteps=20; % number of steps
-ncomp=10;
+ncomp=1;
 %imsz= 1000; % size of output images (bigger or equal to 2 x input image)
 
-picpath='G:\Dropbox\MovieWarpingScript\'; %'D:\Bobby\Experiments\fMRI\VSTM_hierarchy\Images\AllImages';
-outpicpath='G:\Dropbox\MovieWarpingScript\WarpedMovie'; %'D:\Bobby\Experiments\fMRI\VSTM_hierarchy\Images\WarpedImages1_80';
-outvidpath='G:\Dropbox\MovieWarpingScript\WarpedMovie_Vid';
-imgtype='png'; % stills for now, you'll need to use VideoWriter to write video  
+picpath='/Users/evaran/Documents/PZ/02_AV_face/0_dataset/12/4d'; %'D:\Bobby\Experiments\fMRI\VSTM_hierarchy\Images\AllImages';
+outvidpath='/Users/evaran/Documents/PZ/02_AV_face/0_dataset/12/4n_wm';
+vid_type='mp4'; % stills for now, you'll need to use VideoWriter to write video  
 
 % But read in .mov
-fns=dir(fullfile(picpath,'*.mov'));
+fns=dir(fullfile(picpath,'*.mp4'));
 figure(10);
 
 
-imsz=1280+4*maxdistortion;    
+imsz=720+4*maxdistortion;    
 
 % Generate disortion field for all frames - try keeping it fixed to start
 % Only need one not 3 distortion fields, as no longer need the
@@ -48,7 +47,7 @@ cy(mask)=1;
 for i=1:length(fns) %This is the number of objects in the directory
     M=VideoReader(fullfile(picpath,fns(i).name));
     z=0;
-    v=VideoWriter((fullfile(outvidpath,sprintf('Vid_%02d',i)))); 
+    v=VideoWriter((fullfile(outvidpath,sprintf('Vid_%02d.mp4',i))), 'MPEG-4'); 
     outframenum=0;
     v.FrameRate=M.FrameRate; 
     open(v);
@@ -144,6 +143,7 @@ end;
 [YI, XI]=meshgrid(1:imsz,1:imsz);
 
 % make diffeomorphic warp field by adding random DCTs
+disp(randi([1,1000]))
 ph=rand(ncomp,ncomp,4)*2*pi;
 a=rand(ncomp,ncomp)*2*pi;
 b=rand(ncomp,ncomp)*2*pi; % different amplitudes for x and y DCT components
