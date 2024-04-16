@@ -1,4 +1,10 @@
-old_other/
-samples/00_old_other/
-library/00_old_other/
+# Ignore all files in any subfolders under stim_library
+stim_library/*/**/*
+
+# Re-include all directories to keep the folder structure
+!stim_library/*/**/
+
+_old_/
+
 **/.DS_Store
+*.DS_Store
